@@ -29,6 +29,7 @@ from pipecat.services.ollama.llm import OLLamaLLMService
 from pipecat.services.openai.llm import OpenAILLMService
 from pipecat.services.openai.stt import OpenAISTTService
 from pipecat.services.openrouter.llm import OpenRouterLLMService
+from pipecat.services.soniox.stt import SonioxSTTService
 from pipecat.services.speechmatics.stt import SpeechmaticsSTTService
 from pipecat.services.stt_service import STTService
 from pipecat.services.whisper.stt import WhisperSTTService
@@ -279,6 +280,12 @@ STT_PROVIDERS: Final[dict[STTProviderId, STTProviderConfig]] = {
         display_name="OpenAI",
         service_class=OpenAISTTService,
         credential_mapper=ApiKeyMapper("openai_api_key"),
+    ),
+    STTProviderId.SONIOX: STTProviderConfig(
+        provider_id=STTProviderId.SONIOX,
+        display_name="Soniox",
+        service_class=SonioxSTTService,
+        credential_mapper=ApiKeyMapper("soniox_api_key"),
     ),
     STTProviderId.WHISPER: STTProviderConfig(
         provider_id=STTProviderId.WHISPER,

@@ -25,6 +25,7 @@ export const STT_KNOWN_PROVIDER_IDS = [
 	"groq",
 	"nemotron",
 	"openai",
+	"soniox",
 	"whisper",
 ] as const;
 
