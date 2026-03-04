@@ -130,7 +130,12 @@ class DictationContextManager:
             self._context,
             user_params=LLMUserAggregatorParams(
                 user_turn_strategies=ExternalUserTurnStrategies(),
-                user_turn_stop_timeout=10.0,  # Long timeout since we control stops externally
+                # Effectively disabled: TurnController controls turn boundaries
+                # externally via UserStartedSpeaking/UserStoppedSpeaking frames.
+                # A short timeout here would prematurely end the turn during long
+                # pauses or when the STT is slow to respond, causing the aggregator
+                # to emit context to the LLM while the user is still recording.
+                user_turn_stop_timeout=300.0,
             ),
             assistant_params=LLMAssistantAggregatorParams(),
         )
