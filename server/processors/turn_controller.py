@@ -206,6 +206,13 @@ class TurnController(FrameProcessor):
         logger.info("Start-recording received, entering RecordingState")
         self._state = RecordingState()
 
+        # Reset STT state from any previous recording. The STT service uses
+        # UserStartedSpeakingFrame to clear _waiting_for_final, which can get
+        # stuck True if the previous recording's hard reset never received a
+        # response. Without this reset, the STT silently drops transcriptions
+        # from soft-reset responses on subsequent recordings.
+        await self.push_frame(UserStartedSpeakingFrame(), FrameDirection.UPSTREAM)
+
         # Signal user turn start to downstream processors
         # LLMGateFilter will decide whether to pass this to the aggregator
         await self.push_frame(UserStartedSpeakingFrame(), FrameDirection.DOWNSTREAM)
