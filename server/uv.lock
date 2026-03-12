@@ -1417,9 +1417,6 @@ openai = [
 silero = [
     { name = "onnxruntime" },
 ]
-soniox = [
-    { name = "websockets" },
-]
 speechmatics = [
     { name = "speechmatics-voice", extra = ["smart"] },
 ]
@@ -2042,7 +2039,7 @@ source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "loguru" },
-    { name = "pipecat-ai", extra = ["anthropic", "assemblyai", "aws", "azure", "cartesia", "deepgram", "google", "groq", "openai", "silero", "soniox", "speechmatics", "webrtc", "whisper"] },
+    { name = "pipecat-ai", extra = ["anthropic", "assemblyai", "aws", "azure", "cartesia", "deepgram", "google", "groq", "openai", "silero", "speechmatics", "webrtc", "whisper"] },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "slowapi" },
@@ -2062,7 +2059,7 @@ dev = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.129.0" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "pipecat-ai", extras = ["anthropic", "speechmatics", "assemblyai", "aws", "azure", "cartesia", "cerebras", "deepgram", "google", "groq", "openai", "openrouter", "silero", "soniox", "webrtc", "whisper"], specifier = ">=0.0.102" },
+    { name = "pipecat-ai", extras = ["anthropic", "speechmatics", "assemblyai", "aws", "azure", "cartesia", "cerebras", "deepgram", "google", "groq", "openai", "openrouter", "silero", "webrtc", "whisper"], specifier = ">=0.0.102" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pydantic-settings", specifier = ">=2.13.0" },
     { name = "slowapi", specifier = ">=0.1.9" },
