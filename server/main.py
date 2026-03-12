@@ -384,9 +384,40 @@ def initialize_services(settings: Settings) -> AppServices | None:
     )
 
 
+def _handle_asyncio_exception(loop: asyncio.AbstractEventLoop, context: dict[str, object]) -> None:
+    """Custom asyncio exception handler to suppress benign aioice STUN errors.
+
+    aioice's Transaction.__retry() can raise InvalidStateError when a STUN
+    transaction's future has already been resolved or cancelled before the
+    retry timer fires. This is a known race condition in aioice that is
+    harmless—the connection continues to work via other ICE candidates.
+
+    All other exceptions are forwarded to the default handler.
+    """
+    exception = context.get("exception")
+    message = context.get("message", "")
+    if (
+        isinstance(exception, asyncio.InvalidStateError)
+        and isinstance(message, str)
+        and "Transaction.__retry" in message
+    ):
+        logger.warning(
+            "Suppressed benign aioice STUN transaction error "
+            "(InvalidStateError in Transaction.__retry)"
+        )
+        return
+
+    # Fall back to default handler for all other exceptions
+    loop.default_exception_handler(context)
+
+
 @asynccontextmanager
 async def lifespan(fastapi_app: FastAPI):  # noqa: ANN201
-    """FastAPI lifespan context manager for cleanup."""
+    """FastAPI lifespan context manager for startup and cleanup."""
+    # Install custom exception handler to suppress benign aioice errors
+    loop = asyncio.get_running_loop()
+    loop.set_exception_handler(_handle_asyncio_exception)
+
     yield
     logger.info("Shutting down server...")
 
