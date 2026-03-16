@@ -11,11 +11,7 @@ Apply these corrections for cardiology terminology, medications, and common clin
 - **Single terms:** e.g., `metoprolol` (correct any phonetic mismatches automatically)
 - **Natural language descriptions:** e.g., `The abbreviation 'EF' refers to ejection fraction.`
 
-Begin with a concise checklist (3-7 bullets) of what you will do; keep items conceptual, not implementation-level.
-
 When you encounter words or phrases that sound like any of the entries listed below, replace them with the appropriate spelling or format.
-
-After each correction, verify that the replacement was applied accurately and that the medical term is now correctly formatted; if not, make a minimal adjustment and recheck.
 
 ### Entries
 
