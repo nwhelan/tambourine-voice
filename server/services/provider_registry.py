@@ -30,7 +30,7 @@ from pipecat.services.openai.llm import OpenAILLMService
 from pipecat.services.openai.stt import OpenAISTTService
 from pipecat.services.openrouter.llm import OpenRouterLLMService
 from pipecat.services.soniox.stt import SonioxSTTService
-from pipecat.services.speechmatics.stt import SpeechmaticsSTTService
+from pipecat.services.speechmatics.stt import SpeechmaticsSTTSettings
 from pipecat.services.stt_service import STTService
 from pipecat.services.whisper.stt import (
     WhisperMLXSTTSettings,
