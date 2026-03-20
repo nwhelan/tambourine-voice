@@ -16,6 +16,7 @@ import {
 	DEFAULT_PASTE_LAST_HOTKEY,
 	DEFAULT_TOGGLE_HOTKEY,
 } from "./lib/hotkeyDefaults";
+import { formatKeyForPlatform } from "./lib/platformKeys";
 import {
 	useRefreshServerQueriesOnConnect,
 	useSettings,
@@ -31,6 +32,9 @@ import { useRecordingStore } from "./stores/recordingStore";
 import "./app-main.css";
 
 type View = "home" | "settings";
+
+const NOTIFICATION_SUCCESS_TIMEOUT_MS = 2000;
+const NOTIFICATION_ERROR_TIMEOUT_MS = 5000;
 
 function ConnectionStatusIndicator() {
 	const state = useRecordingStore((s) => s.state);
@@ -140,8 +144,8 @@ function HotkeyDisplay({
 }) {
 	const isDisabled = config.enabled === false;
 	const parts = [
-		...config.modifiers.map((m) => m.charAt(0).toUpperCase() + m.slice(1)),
-		config.key,
+		...config.modifiers.map((m) => formatKeyForPlatform(m)),
+		formatKeyForPlatform(config.key),
 	];
 
 	return (
@@ -347,7 +351,7 @@ export default function App() {
 				message:
 					"Some hotkeys were disabled due to conflicts. Check settings to resolve.",
 				color: "yellow",
-				autoClose: 5000,
+				autoClose: NOTIFICATION_ERROR_TIMEOUT_MS,
 			});
 		}
 	}, [shortcutErrors]);
@@ -365,7 +369,7 @@ export default function App() {
 						title: "Settings Updated",
 						message: `${formatSettingName(setting)} updated successfully`,
 						color: "green",
-						autoClose: 2000,
+						autoClose: NOTIFICATION_SUCCESS_TIMEOUT_MS,
 					});
 				})
 				.with({ type: "config-error" }, ({ setting, error }) => {
@@ -373,7 +377,7 @@ export default function App() {
 						title: "Settings Error",
 						message: `Failed to update ${formatSettingName(setting)}: ${error}`,
 						color: "red",
-						autoClose: 5000,
+						autoClose: NOTIFICATION_ERROR_TIMEOUT_MS,
 					});
 					// No auto-fallback - dropdown reverts to previous value (pessimistic update)
 				})
@@ -405,7 +409,7 @@ export default function App() {
 				title: error.fatal ? "Connection Error" : "Processing Error",
 				message: error.message,
 				color: "red",
-				autoClose: 5000,
+				autoClose: NOTIFICATION_ERROR_TIMEOUT_MS,
 			});
 		};
 

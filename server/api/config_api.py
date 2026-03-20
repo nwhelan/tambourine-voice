@@ -177,7 +177,7 @@ def build_provider_list(
             value=provider_id.value,
             label=labels.get(provider_id, provider_id.value),
             is_local=provider_id in local_provider_ids,
-            model=getattr(service, "model_name", None),
+            model=getattr(getattr(service, "_settings", None), "model", None),
         )
         for provider_id, service in services.items()
     ]
@@ -411,7 +411,7 @@ async def get_available_providers(request: Request) -> AvailableProvidersRespons
         stt_providers = build_provider_list(
             services=stt_services,
             labels=get_stt_provider_labels(),
-            local_provider_ids={STTProviderId.WHISPER},
+            local_provider_ids={STTProviderId.WHISPER, STTProviderId.WHISPER_MLX},
         )
         llm_providers = build_provider_list(
             services=llm_services,

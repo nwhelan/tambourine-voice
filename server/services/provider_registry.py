@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any, Final
 # Direct imports from pipecat - type checked at import time
 from pipecat.services.anthropic.llm import AnthropicLLMService
 from pipecat.services.assemblyai.stt import AssemblyAISTTService
-from pipecat.services.aws.llm import AWSBedrockLLMService
+from pipecat.services.aws.llm import AWSBedrockLLMService, AWSBedrockLLMSettings
 from pipecat.services.aws.stt import AWSTranscribeSTTService
 from pipecat.services.azure.stt import AzureSTTService
 from pipecat.services.cartesia.stt import CartesiaSTTService
@@ -25,20 +25,26 @@ from pipecat.services.google.stt import GoogleSTTService
 from pipecat.services.groq.llm import GroqLLMService
 from pipecat.services.groq.stt import GroqSTTService
 from pipecat.services.llm_service import LLMService
-from pipecat.services.ollama.llm import OLLamaLLMService
+from pipecat.services.ollama.llm import OLLamaLLMService, OllamaLLMSettings
 from pipecat.services.openai.llm import OpenAILLMService
 from pipecat.services.openai.stt import OpenAISTTService
 from pipecat.services.openrouter.llm import OpenRouterLLMService
 from pipecat.services.soniox.stt import SonioxSTTService
 from pipecat.services.speechmatics.stt import SpeechmaticsSTTService
 from pipecat.services.stt_service import STTService
-from pipecat.services.whisper.stt import WhisperSTTService
+from pipecat.services.whisper.stt import (
+    WhisperMLXSTTSettings,
+    WhisperSTTService,
+    WhisperSTTServiceMLX,
+    WhisperSTTSettings,
+)
 
 # Provider ID enums from protocol (single source of truth)
 from protocol.providers import LLMProviderId, STTProviderId
 
 # Custom service for Nemotron ASR
 from services.nvidia_stt import NVidiaWebSocketSTTService
+from services.speechmatics_stt import ReconnectingSpeechmaticsSTTService
 
 if TYPE_CHECKING:
     from config.settings import Settings
@@ -172,6 +178,8 @@ class STTProviderConfig:
     service_class: type[STTService]
     credential_mapper: CredentialMapper
     default_kwargs: dict[str, Any] = field(default_factory=dict)
+    settings_class: type | None = None
+    settings_kwargs_keys: frozenset[str] = field(default_factory=frozenset)
 
 
 @dataclass(frozen=True)
@@ -191,6 +199,8 @@ class LLMProviderConfig:
     service_class: type[LLMService]
     credential_mapper: CredentialMapper
     default_kwargs: dict[str, Any] = field(default_factory=dict)
+    settings_class: type | None = None
+    settings_kwargs_keys: frozenset[str] = field(default_factory=frozenset)
 
 
 # =============================================================================
@@ -201,10 +211,10 @@ STT_PROVIDERS: Final[dict[STTProviderId, STTProviderConfig]] = {
     STTProviderId.SPEECHMATICS: STTProviderConfig(
         provider_id=STTProviderId.SPEECHMATICS,
         display_name="Speechmatics",
-        service_class=SpeechmaticsSTTService,
+        service_class=ReconnectingSpeechmaticsSTTService,
         credential_mapper=ApiKeyMapper("speechmatics_api_key"),
         default_kwargs={
-            "params": SpeechmaticsSTTService.InputParams(
+            "settings": SpeechmaticsSTTSettings(
                 end_of_utterance_silence_trigger=0.5,
             )
         },
@@ -299,6 +309,21 @@ STT_PROVIDERS: Final[dict[STTProviderId, STTProviderConfig]] = {
                 "whisper_compute_type": "compute_type",
             },
         ),
+        settings_class=WhisperSTTSettings,
+        settings_kwargs_keys=frozenset({"model"}),
+    ),
+    STTProviderId.WHISPER_MLX: STTProviderConfig(
+        provider_id=STTProviderId.WHISPER_MLX,
+        display_name="Whisper (MLX)",
+        service_class=WhisperSTTServiceMLX,
+        credential_mapper=NoAuthMapper(
+            availability_fields=("whisper_mlx_enabled",),
+            field_mapping={
+                "whisper_mlx_model": "model",
+            },
+        ),
+        settings_class=WhisperMLXSTTSettings,
+        settings_kwargs_keys=frozenset({"model"}),
     ),
 }
 
@@ -328,6 +353,8 @@ LLM_PROVIDERS: Final[dict[LLMProviderId, LLMProviderConfig]] = {
                 "aws_region": "aws_region",
             },
         ),
+        settings_class=AWSBedrockLLMSettings,
+        settings_kwargs_keys=frozenset({"model"}),
     ),
     LLMProviderId.CEREBRAS: LLMProviderConfig(
         provider_id=LLMProviderId.CEREBRAS,
@@ -359,6 +386,8 @@ LLM_PROVIDERS: Final[dict[LLMProviderId, LLMProviderConfig]] = {
                 "ollama_model": "model",
             },
         ),
+        settings_class=OllamaLLMSettings,
+        settings_kwargs_keys=frozenset({"model"}),
     ),
     LLMProviderId.OPENAI: LLMProviderConfig(
         provider_id=LLMProviderId.OPENAI,

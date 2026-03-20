@@ -156,8 +156,10 @@ On macOS, Tambourine needs accessibility permissions to type text at your cursor
 
 **For fully local deployment:**
 - Set `OLLAMA_BASE_URL=http://localhost:11434` in `.env`
-- Set `WHISPER_ENABLED=true` for local STT
-- Optional: set `WHISPER_DEVICE` (`cpu` or `cuda`), `WHISPER_MODEL` (for example `tiny`, `base`, `small`, `medium`, `large`), and `WHISPER_COMPUTE_TYPE` (for example `int8`, `float16`)
+- For Faster-Whisper local STT: set `WHISPER_ENABLED=true` (model pre-downloads at server startup)
+- Optional Faster-Whisper tuning: `WHISPER_DEVICE` (`cpu` or `cuda`), `WHISPER_MODEL` (for example `tiny`, `base`, `small`, `medium`, `large`), and `WHISPER_COMPUTE_TYPE` (for example `int8`, `float16`)
+- For Apple Silicon MLX Whisper local STT: set `WHISPER_MLX_ENABLED=true` (model pre-downloads at server startup)
+- Optional MLX model override: set `WHISPER_MLX_MODEL` (for example `mlx-community/whisper-large-v3-turbo`)
 
 ### 2. Set Up the Server
 
@@ -240,6 +242,26 @@ docker compose down && docker compose up --build -d
 ```
 
 The `.env` file is read at runtime (not baked into the image), so your API keys stay secure.
+
+### Run Server + TURN Together (Local)
+
+Use the root-level compose stack when you want Tambourine server and coturn in one local stack.
+
+```bash
+# from repo root
+cp server/.env.example server/.env
+
+# edit server/.env and set at least one STT + one LLM provider key
+# optional: override local TURN secret and URL
+export TURN_SHARED_SECRET='replace-with-a-random-local-secret'
+# export TURN_SERVER_URL='turn:127.0.0.1:3478'
+
+docker compose up --build -d
+docker compose logs -f
+docker compose down
+```
+
+This stack uses Linux host networking for both services. On non-Linux Docker runtimes, host networking may not behave as expected.
 
 ### Docker Networking Troubleshooting
 

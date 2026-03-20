@@ -38,6 +38,7 @@ class STTProviderId(StrEnum):
     OPENAI = "openai"
     SONIOX = "soniox"
     WHISPER = "whisper"
+    WHISPER_MLX = "whisper_mlx"
 
 
 class LLMProviderId(StrEnum):
