@@ -1395,6 +1395,12 @@ mlx-whisper = [
 openai = [
     { name = "websockets" },
 ]
+silero = [
+    { name = "onnxruntime" },
+]
+soniox = [
+    { name = "websockets" },
+]
 speechmatics = [
     { name = "speechmatics-voice", extra = ["smart"] },
 ]
@@ -1995,7 +2001,7 @@ source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "loguru" },
-    { name = "pipecat-ai", extra = ["anthropic", "assemblyai", "aws", "azure", "cartesia", "deepgram", "google", "groq", "openai", "speechmatics", "webrtc"] },
+    { name = "pipecat-ai", extra = ["anthropic", "assemblyai", "aws", "azure", "cartesia", "deepgram", "google", "groq", "openai", "silero", "soniox", "speechmatics", "webrtc"] },
     { name = "pipecat-ai", extra = ["mlx-whisper"], marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
     { name = "pipecat-ai", extra = ["whisper"], marker = "sys_platform != 'darwin'" },
     { name = "pydantic" },
@@ -2017,7 +2023,7 @@ dev = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "pipecat-ai", extras = ["anthropic", "speechmatics", "assemblyai", "aws", "azure", "cartesia", "cerebras", "deepgram", "google", "groq", "openai", "openrouter", "silero", "webrtc"], specifier = ">=0.0.105" },
+    { name = "pipecat-ai", extras = ["anthropic", "speechmatics", "assemblyai", "aws", "azure", "cartesia", "cerebras", "deepgram", "google", "groq", "openai", "openrouter", "silero", "soniox", "webrtc"], specifier = ">=0.0.105" },
     { name = "pipecat-ai", extras = ["mlx-whisper"], marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=0.0.103" },
     { name = "pipecat-ai", extras = ["whisper"], marker = "sys_platform != 'darwin'", specifier = ">=0.0.103" },
     { name = "pydantic", specifier = ">=2.12.5" },

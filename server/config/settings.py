@@ -58,6 +58,7 @@ class Settings(BaseSettings):
     nemotron_asr_url: str | None = Field(
         None, description="Nemotron ASR WebSocket URL (ws:// or wss://)"
     )
+    soniox_api_key: str | None = Field(None, description="Soniox API key for realtime STT")
 
     # LLM API Keys (at least one required)
     openai_api_key: str | None = Field(None, description="OpenAI API key for LLM")

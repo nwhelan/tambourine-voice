@@ -36,6 +36,7 @@ class STTProviderId(StrEnum):
     GROQ = "groq"
     NEMOTRON = "nemotron"
     OPENAI = "openai"
+    SONIOX = "soniox"
     WHISPER = "whisper"
     WHISPER_MLX = "whisper_mlx"
 
